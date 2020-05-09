@@ -6,12 +6,10 @@ Example :
 
 START
 
-// variable declarations
 auto x;
 auto y;
 auto z;
 
-//expressions
 x = 2*(3+5);  
 y = x^2;  
 
