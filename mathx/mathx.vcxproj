@@ -148,6 +148,7 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="tests\recursive_decent_calculator.txt" />
+    <Text Include="tests\recursive_decent_calculator_declarion_list.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -25,6 +25,7 @@
 #define SEMI_COLON 25
 #define EQUAL	26
 #define OUT 27
+#define COMMA 28
 
 struct Token
 {
@@ -184,6 +185,10 @@ public:
 		else if (next_char == '=')
 		{
 			return new Token(EQUAL, std::string(1, next_char));
+		}
+		else if (next_char == ',')
+		{
+			return new Token(COMMA, std::string(1, next_char));
 		}
 		else if (next_char == '\0' || next_char == '\n')
 		{

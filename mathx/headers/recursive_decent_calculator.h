@@ -21,6 +21,7 @@ class SimpleParser {
 	void program();
 	void decls();
 	void decl();
+	void ids();
 
 	void stmts();
 	void stmt();

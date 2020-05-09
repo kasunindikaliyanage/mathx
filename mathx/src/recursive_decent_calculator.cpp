@@ -63,22 +63,41 @@ void SimpleParser::decl()
 	if (next_token->token_type == AUTO)
 	{
 		getNextToken();
-
 		if (next_token->token_type == ID)
 		{
-			symbol_table.insert(std::pair<std::string, double>(next_token->value, 0.0));
-			getNextToken();
+			backtrack_stack.push(next_token);
+			ids();
 
+			getNextToken();
 			if (next_token->token_type != SEMI_COLON)
 			{
 				backtrack_stack.push(next_token);
-				std::cout << "Expected ; after the declaration \n";
+				std::cout << "Expected ; at the end of the declaration \n";
 			}
 		}
 		else
 		{
 			std::cout << "Expected identifier after AUTO in declarations \n";
 		}
+	}
+}
+
+void SimpleParser::ids()
+{
+	if (next_token->token_type == ID)
+	{
+		getNextToken();
+		symbol_table.insert(std::pair<std::string, double>(next_token->value, 0.0));
+
+		getNextToken();
+		if (next_token->token_type == COMMA)
+		{
+			getNextToken();
+			backtrack_stack.push(next_token);
+			ids();
+		}
+
+		backtrack_stack.push(next_token);
 	}
 }
 
