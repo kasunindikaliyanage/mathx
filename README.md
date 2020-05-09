@@ -13,7 +13,8 @@ auto z;
 
 //expressions
 x = 2*(3+5);  
-y = x^2;       // squre of x
+y = x^2;  
+
 out(x);
 out(y);
 
