@@ -2,6 +2,7 @@
 
 #include <cmath>
 
+// TODO urgently add understandable comments : consider using CFG for corresponding function in the comment as well
 
 void SimpleParser::getNextToken()
 {
@@ -14,6 +15,14 @@ void SimpleParser::getNextToken()
 		next_token = lexer->getNextToken();
 }
 
+
+static bool is_relation_operator(Token* current_token)
+{
+	if (current_token->token_type > 28 && current_token->token_type < 34)
+		return true;
+
+	else return false;
+}
 
 void SimpleParser::program()
 {
@@ -168,6 +177,38 @@ void SimpleParser::stmt()
 		else
 		{
 			std::cout << "Error : expected ( after keyword OUT \n";
+		}
+	}
+	else if (next_token->token_type == IF)
+	{
+		getNextToken();
+		if (next_token->token_type == O_PARAM)
+		{
+			int result1 = expr();
+
+			getNextToken();
+			if (is_relation_operator(next_token))
+			{
+				int result2 = expr();
+
+				// compare the return values of the expression here
+
+				// if the comparison success then parse the statement block of the IF statement.
+				// if the comparison fails simply skip the statement block of the IF statement.
+			}
+			else
+			{
+				std::cout << "Error : expected relation operator in the IF statement \n";
+			}
+
+			if (next_token->token_type != E_PARAM)
+			{
+				std::cout << "Error : expected ) at the end of IF statement \n";
+			}
+		}
+		else
+		{
+			std::cout << "Error : expected ( after keyword IF \n";
 		}
 	}
 	else

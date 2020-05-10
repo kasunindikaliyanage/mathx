@@ -5,27 +5,37 @@
 #include <cctype>
 #include <fstream>
 
-#define PLUS  1
-#define MINUS 2
-#define MUL   3
-#define DIV   4
-#define NUM   5
-#define O_PARAM   6
-#define E_PARAM   7
-#define POW		  8
-#define OTHER	  99
-#define EMPTY	  100
+//TODO arrange the constant in more suitable or logical order
 
-#define ID		50
+#define PLUS		 1
+#define MINUS		 2
+#define MUL			 3
+#define DIV			 4
+#define NUM			 5
+#define O_PARAM		 6
+#define E_PARAM		 7
+#define POW			 8
+#define OTHER		 99
+#define EMPTY		 100
 
-#define START 20
-#define END	  21
-#define AUTO  22
-#define OUT   23
-#define SEMI_COLON 25
-#define EQUAL	26
-#define OUT 27
-#define COMMA 28
+#define ID			 50
+
+#define START		 20
+#define END			 21
+#define AUTO		 22
+#define OUT			 23
+#define SEMI_COLON	 25
+#define EQUAL		 26
+#define OUT			 27
+#define COMMA		 28
+#define EE			 29
+#define LE			 30
+#define GE			 31
+#define GREATER		 32
+#define LESS		 33
+
+#define IF			 60
+#define ELSE		 61
 
 struct Token
 {
@@ -194,6 +204,7 @@ public:
 		{
 			return new Token(EMPTY, std::string("Empty string"));
 		}
+		//TODO add code to return relational operators
 		else
 		{
 			return new Token(OTHER, std::string(1, next_char));
