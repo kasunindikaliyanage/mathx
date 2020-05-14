@@ -5,7 +5,7 @@
 #include <cctype>
 #include <fstream>
 
-//TODO arrange the constant in more suitable or logical order
+// TODO arrange the constant in more suitable or logical order
 
 #define PLUS		 1
 #define MINUS		 2
@@ -28,11 +28,17 @@
 #define EQUAL		 26
 #define OUT			 27
 #define COMMA		 28
-#define EE			 29
-#define LE			 30
-#define GE			 31
-#define GREATER		 32
-#define LESS		 33
+#define O_BRACES	 29
+#define E_BRACES	 30	
+
+#define EE			 35
+#define LE			 36
+#define GE			 37
+#define GREATER		 38
+#define LESS		 39
+
+#define MIN_RELATION_OPS EE
+#define MAX_RELATION_OPS LESS
 
 #define IF			 60
 #define ELSE		 61
@@ -155,6 +161,14 @@ public:
 			{
 				return new Token(END, *temp);
 			}
+			else if (compare_string(*temp, "if"))
+			{
+				return new Token(IF, *temp);
+			}
+			else if (compare_string(*temp, "else"))
+			{
+				return new Token(ELSE, *temp);
+			}
 			else
 			{
 				return new Token(ID, *temp);
@@ -194,17 +208,56 @@ public:
 		}
 		else if (next_char == '=')
 		{
-			return new Token(EQUAL, std::string(1, next_char));
+			char chr = peek_next();
+			
+			if (chr == '=')
+			{
+				read_next();
+				return new Token(EE, std::string(1, next_char));
+			}
+			else
+				return new Token(EQUAL, std::string(1, next_char));
 		}
 		else if (next_char == ',')
 		{
 			return new Token(COMMA, std::string(1, next_char));
 		}
+		else if (next_char == '{')
+		{
+			return new Token(O_BRACES, std::string(1, next_char));
+		}
+		else if (next_char == '}')
+		{
+			return new Token(E_BRACES, std::string(1, next_char));
+		}
+		else if (next_char == '>')
+		{
+			char chr = peek_next();
+			
+			if ( chr == '=' )
+			{
+				read_next();
+				return new Token(GE, std::string(1, next_char));
+			}
+			else
+				return new Token(GREATER, std::string(1, next_char));
+		}
+		else if (next_char == '<')
+		{
+			char chr = peek_next();
+
+			if (chr == '=')
+			{
+				read_next();
+				return new Token(LE, std::string(1, next_char));
+			}
+			else
+				return new Token(LESS, std::string(1, next_char));
+		}
 		else if (next_char == '\0' || next_char == '\n')
 		{
 			return new Token(EMPTY, std::string("Empty string"));
 		}
-		//TODO add code to return relational operators
 		else
 		{
 			return new Token(OTHER, std::string(1, next_char));

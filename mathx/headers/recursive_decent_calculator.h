@@ -10,21 +10,23 @@
 class SimpleParser {
 	SimpleLexer* lexer;
 
-	int factor(int inherited);
-	int factor_(int inherited);
-	int term(int inherited);
-	int term_(int inherited);
-	int expr();
-	int expr_(int inherited);
-	int power(int inherited);
+	int factor(int inherited, bool condition_status = true );
+	int factor_(int inherited, bool condition_status = true);
+	int term(int inherited, bool condition_status = true);
+	int term_(int inherited, bool condition_status = true);
+	int expr(bool condition_status = true);
+	int expr_(int inherited, bool condition_status = true);
+	int power(int inherited, bool condition_status = true);
 
 	void program();
 	void decls();
 	void decl();
 	void ids();
 
-	void stmts();
-	void stmt();
+	void if_block(bool condition_status = true);
+
+	void stmts(bool condition_status = true );
+	void stmt(bool condition_status = true );
 
 	void getNextToken();
 
