@@ -3,6 +3,7 @@
 #include <cmath>
 
 // TODO urgently add understandable comments : consider using CFG for corresponding function in the comment as well
+// TODO this is the branch check.
 
 void SimpleParser::getNextToken()
 {
