@@ -199,7 +199,7 @@ void SimpleParser::stmt(bool condition_status )
 		getNextToken();
 		if (next_token->token_type == O_PARAM)
 		{
-			int result = expr(condition_status);
+			double result = expr(condition_status);
 
 			getNextToken();
 			if (next_token->token_type != E_PARAM)
@@ -219,7 +219,7 @@ void SimpleParser::stmt(bool condition_status )
 		getNextToken();
 		if (next_token->token_type == O_PARAM)
 		{
-			int result1 = expr(condition_status);
+			double result1 = expr(condition_status);
 
 			getNextToken();
 			if (is_relation_operator(next_token))
@@ -228,7 +228,7 @@ void SimpleParser::stmt(bool condition_status )
 				int relation_op = next_token->token_type;
 
 				// right side of the relation expression.
-				int result2 = expr(condition_status);
+				double result2 = expr(condition_status);
 
 				getNextToken();
 
@@ -239,11 +239,11 @@ void SimpleParser::stmt(bool condition_status )
 					// if the comparison success then parse the statement block of the IF statement.
 					if ( evaluate_relation_operator(result1, result2, relation_op) )
 					{
-						if_block(true);
+						block(true && condition_status);
 					}
 					else
 					{
-						if_block(false);
+						block(false && condition_status);
 					}
 				}	
 			}
@@ -253,11 +253,11 @@ void SimpleParser::stmt(bool condition_status )
 				// In this case if the expression return value is > 0 then if condition passes;
 				if (result1 > 0)
 				{
-					if_block(true);
+					block(true && condition_status);
 				}
 				else
 				{
-					if_block(false);
+					block(false && condition_status);
 				}
 			}
 			else
@@ -269,7 +269,64 @@ void SimpleParser::stmt(bool condition_status )
 		{
 			std::cout << "Error : expected ( after keyword IF \n";
 		}
-	}
+	} // end IF statement
+	else if (next_token->token_type == WHILE)
+	{	
+		//handling while with current implementation is pretty hard. 
+		getNextToken();
+		if (next_token->token_type == O_PARAM)
+		{
+			double result1 = expr(condition_status);
+
+			getNextToken();
+			if (is_relation_operator(next_token))
+			{
+				// store the token type, as below call to expr will change the tocken
+				int relation_op = next_token->token_type;
+
+				// right side of the relation expression.
+				double result2 = expr(condition_status);
+
+				getNextToken();
+
+				// end paranthasis of IF condition when both E1 and E2 are present
+				if (next_token->token_type == E_PARAM)
+				{
+					// compare the return values of the expression here
+					// if the comparison success then parse the statement block of the IF statement.
+					if (evaluate_relation_operator(result1, result2, relation_op))
+					{
+						block(true && condition_status);
+					}
+					else
+					{
+						block(false && condition_status);
+					}
+				}
+			}
+			else if (next_token->token_type == E_PARAM) // end paranthasis of IF condition if only one E is present
+			{
+				// only one expression present in the if condition
+				// In this case if the expression return value is > 0 then if condition passes;
+				if (result1 > 0)
+				{
+					block(true && condition_status);
+				}
+				else
+				{
+					block(false && condition_status);
+				}
+			}
+			else
+			{
+				std::cout << "Error : expected relation operator in the IF statement \n";
+			}
+		}
+		else
+		{
+			std::cout << "Error : expected ( after keyword IF \n";
+		}
+	} // end WHILE statement
 	else
 	{
 		backtrack_stack.push(next_token);
@@ -283,7 +340,7 @@ void SimpleParser::stmt(bool condition_status )
 }
 
 // evaluation of condition in the if statement is give as inherited attribute for this.
-void SimpleParser::if_block( bool condition_status )
+void SimpleParser::block( bool condition_status )
 {
 	// check the begining of the if block by open { curly braces
 	getNextToken();
@@ -302,14 +359,14 @@ void SimpleParser::if_block( bool condition_status )
 	}
 }
 
-int SimpleParser::expr(bool condition_status )
+double SimpleParser::expr(bool condition_status )
 {
-	int t_return = term(1);
-	int e_dash_return = expr_(t_return);
+	double t_return = term(1);
+	double e_dash_return = expr_(t_return);
 	return e_dash_return;
 }
 
-int SimpleParser::expr_(int inherited, bool condition_status )
+double SimpleParser::expr_(double inherited, bool condition_status )
 {
 	if (!eol)
 	{
@@ -317,15 +374,15 @@ int SimpleParser::expr_(int inherited, bool condition_status )
 
 		if (next_token->token_type == PLUS)
 		{
-			int t_return = term(1);
-			int e_dash_inherited = inherited + t_return;
+			double t_return = term(1);
+			double e_dash_inherited = inherited + t_return;
 
 			return expr_(e_dash_inherited);
 		}
 		else if (next_token->token_type == MINUS)
 		{
-			int t_return = term(1);
-			int e_dash_inherited = inherited - t_return;
+			double t_return = term(1);
+			double e_dash_inherited = inherited - t_return;
 
 			return expr_(e_dash_inherited);
 		}
@@ -343,14 +400,14 @@ int SimpleParser::expr_(int inherited, bool condition_status )
 	return inherited;
 }
 
-int SimpleParser::term(int inherited, bool condition_status )
+double SimpleParser::term(double inherited, bool condition_status )
 {
-	int f_return = factor(inherited);
-	int t_dash_return = term_(f_return);
+	double f_return = factor(inherited);
+	double t_dash_return = term_(f_return);
 	return t_dash_return;
 }
 
-int SimpleParser::term_(int inherited, bool condition_status )
+double SimpleParser::term_(double inherited, bool condition_status )
 {
 	if (!eol)
 	{
@@ -358,15 +415,15 @@ int SimpleParser::term_(int inherited, bool condition_status )
 
 		if (next_token->token_type == MUL)
 		{
-			int f_return = factor(inherited);
-			int t_dash_inherited = inherited * f_return;
+			double f_return = factor(inherited);
+			double t_dash_inherited = inherited * f_return;
 
 			return term_(t_dash_inherited);
 		}
 		if (next_token->token_type == DIV)
 		{
-			int f_return = factor(inherited);
-			int t_dash_inherited = inherited;
+			double f_return = factor(inherited);
+			double t_dash_inherited = inherited;
 
 			if (f_return != 0)
 				t_dash_inherited = inherited / f_return;
@@ -387,14 +444,14 @@ int SimpleParser::term_(int inherited, bool condition_status )
 	return inherited;
 }
 
-int SimpleParser::factor(int inherited, bool condition_status )
+double SimpleParser::factor(double inherited, bool condition_status )
 {
-	int p_return = power(inherited);
-	int t_dash_return = factor_(p_return);
+	double p_return = power(inherited);
+	double t_dash_return = factor_(p_return);
 	return t_dash_return;
 }
 
-int SimpleParser::factor_(int inherited, bool condition_status )
+double SimpleParser::factor_(double inherited, bool condition_status )
 {
 	if (!eol)
 	{
@@ -402,8 +459,8 @@ int SimpleParser::factor_(int inherited, bool condition_status )
 
 		if (next_token->token_type == POW)
 		{
-			int p_return = power(inherited);
-			int f_dash_inherited = std::pow(inherited, p_return);
+			double p_return = power(inherited);
+			double f_dash_inherited = std::pow(inherited, p_return);
 
 			return factor_(f_dash_inherited);
 		}
@@ -421,7 +478,7 @@ int SimpleParser::factor_(int inherited, bool condition_status )
 	return inherited;
 }
 
-int SimpleParser::power(int inherited, bool condition_status )
+double SimpleParser::power(double inherited, bool condition_status )
 {
 	if (!eol)
 	{
@@ -429,11 +486,11 @@ int SimpleParser::power(int inherited, bool condition_status )
 
 		if (next_token->token_type == NUM)
 		{
-			return atoi(next_token->value.c_str());
+			return atof(next_token->value.c_str());
 		}
 		else if (next_token->token_type == O_PARAM)
 		{
-			int result = expr(condition_status);
+			double result = expr(condition_status);
 			getNextToken();
 			if (!next_token->token_type == E_PARAM)
 			{

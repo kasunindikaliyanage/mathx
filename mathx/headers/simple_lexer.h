@@ -6,6 +6,7 @@
 #include <fstream>
 
 // TODO arrange the constant in more suitable or logical order
+// TODO introduce list of unique pointers which stores the reusable tokens and return those when match found.
 
 #define PLUS		 1
 #define MINUS		 2
@@ -42,6 +43,7 @@
 
 #define IF			 60
 #define ELSE		 61
+#define WHILE		 62       
 
 struct Token
 {
@@ -128,7 +130,24 @@ public:
 				break;
 			} while (true);
 
-			return new Token(NUM, std::to_string(v));
+			if (chr != '.')
+				return new Token(NUM, std::to_string(v));
+			
+			read_next();
+			float r = v;
+			float d = 10;
+
+			do {
+				chr = peek_next();
+				if (!std::isdigit(chr))
+					break;
+
+				read_next();
+				r = r + std::atoi(&next_char) / d;
+				d = d * 10;
+			} while (true);
+
+			return new Token(NUM, std::to_string(r));
 		}
 		else if (std::isalpha(next_char))
 		{
@@ -168,6 +187,10 @@ public:
 			else if (compare_string(*temp, "else"))
 			{
 				return new Token(ELSE, *temp);
+			}
+			else if (compare_string(*temp, "while"))
+			{
+				return new Token(WHILE, *temp);
 			}
 			else
 			{

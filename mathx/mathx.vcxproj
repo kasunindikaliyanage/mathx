@@ -144,7 +144,6 @@
   <ItemGroup>
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\recursive_decent_calculator.cpp" />
-    <ClCompile Include="src\simple_lexer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="tests\if_with_relation_operation_check.txt" />
